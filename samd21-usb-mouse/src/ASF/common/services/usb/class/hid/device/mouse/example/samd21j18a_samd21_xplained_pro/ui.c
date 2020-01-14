@@ -38,9 +38,9 @@
 #include "ui.h"
 
 #define  MOUSE_MOVE_RANGE 2
-#define  MOUSE_MOVE_PERIOD 60
+#define  MOUSE_MOVE_PERIOD (120*1000)
 
-extern uint32_t sys_timer;
+extern uint32_t sys_timer_ms;
 volatile uint8_t flag = 1;
 
 /* Interrupt on "pin change" from push button to do wakeup on USB
@@ -102,14 +102,14 @@ void ui_process(uint16_t framenumber)
 	static uint8_t cpt_sof;
     static uint32_t c_timer = 0, mn = 0;
 	
-	if ((sys_timer%MOUSE_MOVE_PERIOD == 0)	&& flag) {
+	if ((sys_timer_ms%MOUSE_MOVE_PERIOD == 0) && flag) {
 		LED_On(LED_0_PIN);
 		udi_hid_mouse_moveY(mn++%2 ? MOUSE_MOVE_RANGE : -MOUSE_MOVE_RANGE);
 		flag = 0;
-		c_timer = sys_timer;
+		c_timer = sys_timer_ms;
 	}
 	
-	if (sys_timer > (c_timer+1)) {
+	if (sys_timer_ms > (c_timer+50)) {
 		flag = 1;
 		LED_Off(LED_0_PIN);
 	}

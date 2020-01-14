@@ -39,7 +39,7 @@
 #include "ui.h"
 
 static volatile bool main_b_mouse_enable = false;
-volatile uint32_t sys_timer = 0;
+volatile uint32_t sys_timer_ms = 0;
 
 /*! \brief Main function. Execution starts here.
  */
@@ -87,11 +87,9 @@ int main(void)
 
 void SysTick_Handler(void)
 {
-	static uint16_t ms = 0;
-	if(ms++ == 1000) {
-		sys_timer++;
+	sys_timer_ms++;
+	if(sys_timer_ms%500 == 0) {
 		port_pin_toggle_output_level(PIN_PA27);
-		ms = 0;
 	}
 }
 
